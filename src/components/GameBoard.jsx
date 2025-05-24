@@ -44,7 +44,7 @@ const GameBoard = ({ player1, player2 }) => {
       <h1 className="fw-bold text-purple mt-4">Emoji Tic Tac Toe</h1>
       <p className="text-muted">A twisted version with vanishing emojis!</p>
 
-      <PlayerBar player1={player1} player2={player2} />
+      <PlayerBar player1={player1} player2={player2} activePlayer={turn} />
 
       <div className="mt-3">
         {!winner && <h5><strong className="text-purple">{turn.name}</strong>'s turn</h5>}
