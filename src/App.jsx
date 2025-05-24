@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useState } from 'react';
-import GameStartOverlay from './components/GameOverlay'; 
-import PlayerSetup from './components/PlayerSetup';      
-import GameBoard from './components/GameBoard';          
+import GameStartOverlay from './components/GameOverlay';
+import PlayerSetup from './components/PlayerSetup';
+import GameBoard from './components/GameBoard';
 import emojiCategories from './data/emoji';
 
 function App() {
@@ -52,10 +52,11 @@ function App() {
 
       {step === 3 && (
         <GameBoard
-          player1={{ ...player1, emoji: getEmoji(player1.emojiCategory) }}
-          player2={{ ...player2, emoji: getEmoji(player2.emojiCategory) }}
+          player1={player1}
+          player2={player2}
         />
       )}
+
     </>
   );
 }
