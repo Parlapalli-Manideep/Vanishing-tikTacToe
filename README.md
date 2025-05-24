@@ -1,12 +1,54 @@
-# React + Vite
+# 🧩 Vanishing Emoji Tic Tac Toe
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A fun twist on the classic Tic Tac Toe — built with React!  
+Each player uses emojis from a selected category, and can only have **3 emojis on the board at a time**. The older ones vanish as you place new ones!
 
-Currently, two official plugins are available:
+## 🎮 Live Demo
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+🔗 [Play the Game on Vercel] : https://vanishing-tik-tac-toe.vercel.app/
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🚀 Features
+
+- 🧑‍🤝‍🧑 Two-player mode (no computer opponent)
+- 😄 Choose emoji categories (Animals, Food, Nature, etc.)
+- 🔄 Dynamic emoji placement (every move shows a different emoji)
+- 💨 Vanishing rule: only 3 moves per player on board at any time
+- 🏆 Win detection logic with animated overlay
+- 📱 Responsive design (mobile-friendly)
+- 💅 Styled with Bootstrap and custom CSS
+
+---
+
+🧠 Game Rules:
+
+ - Players take turns placing emojis.
+ - A player can only have 3 emojis on the board.
+ - Older emojis will vanish as new ones are placed.
+ - First to align 3 positions (row, column, or diagonal) wins.
+ - Emoji used in the board is randomized from the selected category.
+
+---
+
+## 🛠️ Tech Stack
+
+- ⚛️ React
+- 💅 CSS & Bootstrap
+- 📦 Vite / Create React App
+- 🎯 Deployed on Vercel
+
+---
+
+## 📦 Installation & Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/your-username/vanishing-tic-tac-toe.git
+cd vanishing-tic-tac-toe
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
