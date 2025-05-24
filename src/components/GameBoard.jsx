@@ -1,56 +1,75 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PlayerBar from "./PlayBar";
-
+import WinOverlay from "./WinOverlay";
+import "../styling/gameBoard.css"
+import checkWin from "./checkWin";
 
 const GameBoard = ({ player1, player2 }) => {
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(player1);
-  const [currentEmoji, setCurrentEmoji] = useState(player1.emoji);
+  const [moves, setMoves] = useState({ [player1.name]: [], [player2.name]: [] });
+  const [winner, setWinner] = useState(null);
 
   const handleClick = (i) => {
-    if (board[i]) return;
+    if (board[i] || winner) return;
+
+    const currentMoves = [...moves[turn.name]];
     const newBoard = [...board];
-    newBoard[i] = currentEmoji;
+    newBoard[i] = turn.emoji;
+    currentMoves.push(i);
+
+    if (currentMoves.length > 3) {
+      const removeIndex = currentMoves.shift();
+      newBoard[removeIndex] = null;
+    }
+
+    if (checkWin(currentMoves)) {
+      setWinner({ name: turn.name, emoji: turn.emoji, positions: currentMoves });
+    }
+
     setBoard(newBoard);
-    const nextPlayer = turn.name === player1.name ? player2 : player1;
-    setTurn(nextPlayer);
-    setCurrentEmoji(nextPlayer.emoji);
+    setMoves({ ...moves, [turn.name]: currentMoves });
+    setTurn(turn.name === player1.name ? player2 : player1);
+  };
+
+  const resetGame = () => {
+    setBoard(Array(9).fill(null));
+    setMoves({ [player1.name]: [], [player2.name]: [] });
+    setTurn(player1);
+    setWinner(null);
   };
 
   return (
-    <div className="container text-center">
+    <div className="game-container text-center">
       <h1 className="fw-bold text-purple mt-4">Emoji Tic Tac Toe</h1>
       <p className="text-muted">A twisted version with vanishing emojis!</p>
 
       <PlayerBar player1={player1} player2={player2} />
 
-      <div className="mt-4 mb-2">
-        <h5><strong className="text-purple">{turn.name}</strong>'s turn</h5>
+      <div className="mt-3">
+        {!winner && <h5><strong className="text-purple">{turn.name}</strong>'s turn</h5>}
       </div>
 
-      <div className="d-grid mx-auto" style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 100px)',
-        gap: '10px',
-        justifyContent: 'center'
-      }}>
+      <div className="board-grid mt-3">
         {board.map((cell, i) => (
-          <div key={i}
-            className="border rounded d-flex align-items-center justify-content-center"
-            style={{
-              width: '100px',
-              height: '100px',
-              fontSize: '2rem',
-              background: '#f8f0ff',
-              borderColor: 'purple',
-              cursor: 'pointer'
-            }}
+          <div
+            key={i}
+            className="cell"
             onClick={() => handleClick(i)}
           >
             {cell}
           </div>
         ))}
       </div>
+
+      {winner && (
+        <WinOverlay
+          name={winner.name}
+          emoji={winner.emoji}
+          positions={winner.positions}
+          onPlayAgain={resetGame}
+        />
+      )}
     </div>
   );
 };
