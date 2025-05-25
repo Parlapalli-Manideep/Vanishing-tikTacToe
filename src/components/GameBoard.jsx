@@ -5,44 +5,76 @@ import "../styling/gameBoard.css";
 import checkWin from "./checkWin";
 import emojiCategories from "../data/emoji";
 
-const GameBoard = ({ player1, player2 }) => {
+const GameBoard = ({ player1, player2, onBackToMenu }) => {
+  const getRandomEmoji = (category, usedEmojis = []) => {
+    const emojis = emojiCategories[category];
+    const availableEmojis = emojis.filter(emoji => !usedEmojis.includes(emoji));
+    
+    if (availableEmojis.length === 0) {
+      return emojis[Math.floor(Math.random() * emojis.length)];
+    }
+    
+    return availableEmojis[Math.floor(Math.random() * availableEmojis.length)];
+  };
+
   const [board, setBoard] = useState(Array(9).fill(null));
   const [turn, setTurn] = useState(player1);
   const [moves, setMoves] = useState({ [player1.name]: [], [player2.name]: [] });
   const [winner, setWinner] = useState(null);
+  const [usedEmojis, setUsedEmojis] = useState([]);
   const [lastUsedEmoji, setLastUsedEmoji] = useState({
     [player1.name]: null,
-    [player2.name]: null
+    [player2.name]: null,
   });
-
-  const getRandomEmoji = (category) => {
-    const emojis = emojiCategories[category];
-    return emojis[Math.floor(Math.random() * emojis.length)];
-  };
+  const [nextEmoji, setNextEmoji] = useState({
+    [player1.name]: getRandomEmoji(player1.emojiCategory),
+    [player2.name]: getRandomEmoji(player2.emojiCategory),
+  });
 
   const handleClick = (i) => {
     if (board[i] || winner) return;
 
     const currentMoves = [...moves[turn.name]];
     const newBoard = [...board];
-    const randomEmoji = getRandomEmoji(turn.emojiCategory);
+    const emojiToUse = nextEmoji[turn.name];
+    let newUsedEmojis = [...usedEmojis];
 
-    newBoard[i] = randomEmoji;
+    newBoard[i] = emojiToUse;
     currentMoves.push(i);
+    newUsedEmojis.push(emojiToUse);
 
     if (currentMoves.length > 3) {
       const removeIndex = currentMoves.shift();
+      const removedEmoji = newBoard[removeIndex];
       newBoard[removeIndex] = null;
+      
+      newUsedEmojis = newUsedEmojis.filter(emoji => emoji !== removedEmoji);
     }
 
     if (checkWin(currentMoves)) {
-      setWinner({ name: turn.name, emoji: randomEmoji, positions: currentMoves });
+      const winningEmojis = currentMoves.map(position => newBoard[position]);
+      setWinner({ 
+        name: turn.name, 
+        positions: currentMoves,
+        winningEmojis: winningEmojis
+      });
     }
+
+    const nextTurn = turn.name === player1.name ? player2 : player1;
+
+    const currentBoardEmojis = newBoard.filter(cell => cell !== null);
+    const nextPlayerNextEmoji = getRandomEmoji(nextTurn.emojiCategory, currentBoardEmojis);
 
     setBoard(newBoard);
     setMoves({ ...moves, [turn.name]: currentMoves });
-    setLastUsedEmoji({ ...lastUsedEmoji, [turn.name]: randomEmoji });
-    setTurn(turn.name === player1.name ? player2 : player1);
+    setUsedEmojis(newUsedEmojis);
+    setLastUsedEmoji({ ...lastUsedEmoji, [turn.name]: emojiToUse });
+    setTurn(nextTurn);
+
+    setNextEmoji({
+      ...nextEmoji,
+      [nextTurn.name]: nextPlayerNextEmoji,
+    });
   };
 
   const resetGame = () => {
@@ -50,7 +82,12 @@ const GameBoard = ({ player1, player2 }) => {
     setMoves({ [player1.name]: [], [player2.name]: [] });
     setTurn(player1);
     setWinner(null);
+    setUsedEmojis([]);
     setLastUsedEmoji({ [player1.name]: null, [player2.name]: null });
+    setNextEmoji({
+      [player1.name]: getRandomEmoji(player1.emojiCategory),
+      [player2.name]: getRandomEmoji(player2.emojiCategory),
+    });
   };
 
   return (
@@ -67,19 +104,16 @@ const GameBoard = ({ player1, player2 }) => {
         {!winner && (
           <h5>
             <strong className="text-purple">
-              {turn.name} {lastUsedEmoji[turn.name] || ""}
-            </strong>'s turn
+              {turn.name} {nextEmoji[turn.name] || ""}
+            </strong>
+            's turn
           </h5>
         )}
       </div>
 
       <div className="board-grid mt-3">
         {board.map((cell, i) => (
-          <div
-            key={i}
-            className="cell"
-            onClick={() => handleClick(i)}
-          >
+          <div key={i} className="cell" onClick={() => handleClick(i)}>
             {cell}
           </div>
         ))}
@@ -88,9 +122,10 @@ const GameBoard = ({ player1, player2 }) => {
       {winner && (
         <WinOverlay
           name={winner.name}
-          emoji={winner.emoji}
+          winningEmojis={winner.winningEmojis}
           positions={winner.positions}
           onPlayAgain={resetGame}
+          onMenu={onBackToMenu}
         />
       )}
     </div>

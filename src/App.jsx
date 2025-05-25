@@ -25,6 +25,13 @@ function App() {
     setStep(3);
   };
 
+  const handleBackToMenu = () => {
+    setStep(1);
+    setPlayer1(null);
+    setPlayer2(null);
+    setShowGameStart(false);
+  };
+
   const getEmoji = (category) => {
     const emojis = emojiCategories[category];
     return emojis[Math.floor(Math.random() * emojis.length)];
@@ -54,6 +61,7 @@ function App() {
         <GameBoard
           player1={player1}
           player2={player2}
+          onBackToMenu={handleBackToMenu}
         />
       )}
 
