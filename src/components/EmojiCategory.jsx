@@ -6,7 +6,7 @@ const EmojiCategory = ({ category, emojis, selected, disabled, onSelect }) => {
       onClick={() => !disabled && onSelect(category)}
     >
       <h6>{category}</h6>
-      <div style={{ fontSize: '1.5rem' }}>{emojis.join(" ")}</div>
+ <div style={{ fontSize: '1.5rem', cursor: disabled ? 'default' : 'pointer' }}>{emojis.join(" ")}</div>
     </div>
   );
 };
